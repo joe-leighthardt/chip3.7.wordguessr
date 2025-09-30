@@ -4,16 +4,16 @@ class WordGuesserGame
 
   # Get a word from remote "random word" service
 
-  def initialize(new_word, guesses = '', wgl = [], gl= [], wwg = "-",win = :play, count = 0)
+  def initialize(new_word, guesses = '', gl= [], wwg = "-",win = :play, count = 0)
     @word = new_word
     @guesses = guesses
     @guess_list = gl
-    @wrong_guesses = wgl
+    @wrong_guesses = guesses
     @word_with_guesses = wwg * word.length
     @check_win_or_lose = win
     @count = count
   end
-  attr_accessor :word, :guesses, :wrong_guesses, :guess_list, :wrong_guess_list, :word_with_guesses, :check_win_or_lose, :count
+  attr_accessor :word, :guesses, :wrong_guesses, :guess_list, :word_with_guesses, :check_win_or_lose, :count
   
   def guess(guess)
     if guess == '' or guess == nil  or not(guess.match?(/[A-Z,a-z]/))
@@ -30,8 +30,8 @@ class WordGuesserGame
         return true
       end
     end
-    for i in self.wrong_guesses do
-      if i.downcase == guess.downcase
+    for i in 0..self.wrong_guesses.length()-1 do
+      if self.wrong_guesses[i].downcase == guess.downcase
         return true
       end
     end
@@ -48,7 +48,7 @@ class WordGuesserGame
       end
       return false
     elsif not(word.include?(guess))
-      self.wrong_guesses.push(guess)
+      self.wrong_guesses += (guess)
       return false 
     end
   end
