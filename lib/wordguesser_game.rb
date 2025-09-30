@@ -4,9 +4,55 @@ class WordGuesserGame
 
   # Get a word from remote "random word" service
 
-  def initialize(word)
-    @word = word
+  def initialize(new_word, guesses = '', wrong_guesses = '', wgl = [], gl= [], wwg = "-",win = :play, count = 0)
+    @word = new_word
+    @guesses = guesses
+    @guess_list = gl
+    @wrong_guesses = wrong_guesses
+    @wrong_guess_list = wgl
+    @word_with_guesses = wwg * word.length
+    @check_win_or_lose = win
+    @count = count
   end
+  attr_accessor :word, :guesses, :wrong_guesses, :guess_list, :wrong_guess_list, :word_with_guesses, :check_win_or_lose, :count
+  
+  def guess(guess)
+    self.count+=1
+    if self.count ==7
+      self.check_win_or_lose = :lose
+    end
+    if guess == '' or guess == nil  or not(guess.match?(/[A-Z,a-z]/))
+      raise ArgumentError
+    end
+    for i in self.guess_list do
+        if i.downcase == guess.downcase
+          return false
+        end
+      end
+      for i in self.wrong_guess_list do
+        if i.downcase == guess.downcase
+          return false
+        end
+      end
+    if word.include?(guess)
+      self.guesses = guess
+      self.guess_list.push(guess)
+      for i in 0..self.word.length do
+        if self.word[i] == guess
+          self.word_with_guesses[i] = self.word[i]
+        end
+      end
+      if self.word == self.word_with_guesses
+        self.check_win_or_lose = :win
+      end
+      return true
+    elsif not(word.include?(guess))
+      self.wrong_guesses = guess
+      self.wrong_guess_list.push(guess)
+      return true 
+    end
+  end
+
 
   # You can test it by installing irb via $ gem install irb
   # and then running $ irb -I. -r app.rb
